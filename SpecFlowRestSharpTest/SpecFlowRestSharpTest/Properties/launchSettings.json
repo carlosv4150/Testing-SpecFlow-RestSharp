@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "SpecFlowRestSharpTest": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
