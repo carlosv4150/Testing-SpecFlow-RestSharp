@@ -5,10 +5,12 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQL.NET", "GraphQL.NET\GraphQL.NET.csproj", "{DC4708BB-FFA6-4DE1-92CD-923AC30782E2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpecFlowRestSharpTest", "SpecFlowRestSharpTest\SpecFlowRestSharpTest\SpecFlowRestSharpTest.csproj", "{11991EBB-9A9F-448C-8D57-47132DC4CAFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RestSharpTest", "SpecFlowRestSharpTest\SpecFlowRestSharpTest\RestSharpTest.csproj", "{11991EBB-9A9F-448C-8D57-47132DC4CAFD}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DC4708BB-FFA6-4DE1-92CD-923AC30782E2} = {DC4708BB-FFA6-4DE1-92CD-923AC30782E2}
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RestSharpSpecFlow", "RestSharpSpecFlow\RestSharpSpecFlow.csproj", "{2F9301E6-E04E-4A41-BB6A-81EAD8387CAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +26,10 @@ Global
 		{11991EBB-9A9F-448C-8D57-47132DC4CAFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11991EBB-9A9F-448C-8D57-47132DC4CAFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11991EBB-9A9F-448C-8D57-47132DC4CAFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F9301E6-E04E-4A41-BB6A-81EAD8387CAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F9301E6-E04E-4A41-BB6A-81EAD8387CAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F9301E6-E04E-4A41-BB6A-81EAD8387CAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F9301E6-E04E-4A41-BB6A-81EAD8387CAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

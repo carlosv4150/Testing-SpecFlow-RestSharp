@@ -1,37 +1,28 @@
 using FluentAssertions;
 using GraphQLProductApp.Data;
 using Newtonsoft.Json.Linq;
-using RestSharp;
+using SpecFlowRestSharpTest.Base;
 using Xunit;
-using Xunit.Abstractions;
 
+namespace SpecFlowRestSharpTest;
 public class BasicTests
 
 {
-    private RestClientOptions _restClientOpt;
-
-    public BasicTests(ITestOutputHelper output)
+    private readonly IRestFactory _restFactory;
+    private readonly string? _token;
+    public BasicTests(IRestFactory restFactory)
     {
-        _restClientOpt = new RestClientOptions
-        {
-            BaseUrl = new Uri("https://localhost:5001"),
-            RemoteCertificateValidationCallback = (sender, certificate, chain, error) => true
-        };
+        _restFactory = restFactory;
+        _token = GetToken();
     }
 
     [Fact]
     public async Task GetOperationTest()
     {
-
-        // Rest Client
-        var client = new RestClient(_restClientOpt);
-
-        // Rest Request
-        var request = new RestRequest("/Product/GetProductById/1");
-        request.AddHeader("Authorization", $"Bearer {GetToken()}");
-
-        //Perform GET
-        var response = await client.GetAsync<Product> (request);
+        var response = await _restFactory.Create()
+            .WithRequest("/Product/GetProductById/1")
+            .WithHeader("Authorization", $"Bearer {_token}")
+            .WithGet<Product>();
 
         //Assert
         response?.Name.Should().Be("Keyboard");
@@ -40,17 +31,11 @@ public class BasicTests
     [Fact]
     public async Task GetWithQuerySegmentTest()
     {
-
-        // Rest Client
-        var client = new RestClient(_restClientOpt);
-
-        // Rest Request
-        var request = new RestRequest("/Product/GetProductById/{id}");
-        request.AddHeader("Authorization", $"Bearer {GetToken()}");
-        request.AddUrlSegment("id", 2);
-
-        //Perform GET
-        var response = await client.GetAsync<Product>(request);
+        var response = await _restFactory.Create()
+            .WithRequest("/Product/GetProductById/{id}")
+            .WithHeader("Authorization", $"Bearer {_token}")
+            .WithUrlSegment("id", "2")
+            .WithGet<Product>();
 
         //Assert
         response?.Price.Should().Be(400);
@@ -59,18 +44,12 @@ public class BasicTests
     [Fact]
     public async Task GetWithQueryParameterTest()
     {
-
-        // Rest Client
-        var client = new RestClient(_restClientOpt);
-
-        // Rest Request
-        var request = new RestRequest("/Product/GetProductByIdAndName/{id}");
-        request.AddHeader("Authorization", $"Bearer {GetToken()}");
-        request.AddQueryParameter("id", 2);
-        request.AddQueryParameter("name", "Monitor");
-
-        //Perform GET
-        var response = await client.GetAsync<Product>(request);
+        var response = await _restFactory.Create()
+            .WithRequest("/Product/GetProductByIdAndName/{id}")
+            .WithHeader("Authorization", $"Bearer {_token}")
+            .WithQueryParameter("id", "2")
+            .WithQueryParameter("name", "Monitor")
+            .WithGet<Product>();
 
         //Assert
         response?.Price.Should().Be(400);
@@ -79,44 +58,53 @@ public class BasicTests
     [Fact]
     public async Task PostTest()
     {
-        // Rest Client
-        var client = new RestClient(_restClientOpt);
-
-        // Rest Request
-        var request = new RestRequest("/Product/Create");
-        request.AddHeader("Authorization", $"Bearer {GetToken()}");
-        request.AddJsonBody(new Product
-        {
-            Name = "Printer",
-            Description = "Color Printer",
-            Price = 500,
-            ProductType = ProductType.PERIPHARALS
-        });
-
-        //Perform POST
-        var response = await client.PostAsync<Product>(request);
+        var response = await _restFactory.Create()
+            .WithRequest("Product/Create")
+            .WithHeader("Authorization", $"Bearer {_token}")
+            .WithBody(new Product
+            {
+                Name = "Printer",
+                Description = "Color Printer",
+                Price = 500,
+                ProductType = ProductType.PERIPHARALS
+            })
+            .WithPost<Product>();
 
         //Assert
         response?.Price.Should().Be(500);
     }
 
-    private string GetToken()
+    /*[Fact]
+    public async Task FileUploadTest()
     {
-        // Rest Client
-        var client = new RestClient(_restClientOpt);
-
+        var response = await _restFactory.Create()
+            .WithRequest("Product")
+            .WithHeader("Authorization", $"Bearer {_token}")
+            .WithFile("myFile", @"C:\git\Dotnet\TestImage\restsharp.png", "multipart/form-data")
+            .WithPost();// pending to check if is necessary a diferent method to upload file
         // Rest Request
-        var authRequest = new RestRequest("/api/Authenticate/Login");
-
-        // Anonymous object being passed as body in request
-        authRequest.AddJsonBody(new
-        {
-            username = "carlos",
-            password = "1234"
-        });
+        /*var request = new RestRequest("Product", Method.Post);
+        request.AddHeader("Authorization", $"Bearer {GetToken()}");
+        request.AddFile("myFile", @"C:\git\Dotnet\TestImage\restsharp.png", "multipart/form-data");
 
         //Perform POST
-        var authResponse = client.PostAsync(authRequest).Result.Content;
+        var response = await _client.ExecuteAsync(request);
+
+        //Assert
+        response?.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
+    }*/
+
+    private string GetToken()
+    {
+        var authResponse = _restFactory
+            .Create()
+            .WithRequest("api/Authenticate/Login")
+            .WithBody(new
+            {
+                username = "carlos",
+                password = "1234"
+            })
+            .WithPost().Result.Content;
 
         return JObject.Parse(authResponse)["token"].ToString();
     }
